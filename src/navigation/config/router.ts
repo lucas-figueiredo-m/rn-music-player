@@ -1,0 +1,4 @@
+export enum MainRoutes {
+  SPLASH_SCREEN = 'SPLASH_SCREEN',
+  PLAYLIST_SCREEN = 'PLAYLIST_SCREEN'
+}
