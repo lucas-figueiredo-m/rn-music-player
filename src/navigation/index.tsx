@@ -13,6 +13,7 @@ export type RootStackParamList = {
 }
 
 export type SplashScreenProps = StackNavigationProp<RootStackParamList, MainRoutes.SPLASH_SCREEN>
+export type PlaylistScreenProps = StackNavigationProp<RootStackParamList, MainRoutes.PLAYLIST_SCREEN>
 
 
 
