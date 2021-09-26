@@ -11,7 +11,10 @@ export interface UserData {
   },
   href: string,
   id: string,
-  images: UserProfileImage[]
+  images: UserProfileImage[],
+  product: string,
+  type: string,
+  uri: string
 }
 
 export interface UserProfileImage {
