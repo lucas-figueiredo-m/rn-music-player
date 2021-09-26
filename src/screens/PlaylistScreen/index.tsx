@@ -1,14 +1,16 @@
 import React from 'react'
-import { View, Text } from 'react-native'
+import { SafeAreaView } from 'react-native'
+
 import { styles } from './styles'
 
+
 const PlaylistScreen: React.FC = () => {
-  
- return (
-   <View style={styles.root}>
-     <Text>Hello World</Text>
-   </View>
- )
+
+  return (
+    <SafeAreaView style={styles.root}>
+
+    </SafeAreaView>
+  )
 }
 
 export default PlaylistScreen

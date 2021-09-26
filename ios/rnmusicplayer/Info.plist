@@ -72,5 +72,10 @@
 		<string>Montserrat-Thin.ttf</string>
 		<string>Montserrat-ThinItalic.ttf</string>
 	</array>
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>rn-music-player</string>
+		<string>org.reactjs.native.example.rnmusicplayer</string>
+	</array>
 </dict>
 </plist>

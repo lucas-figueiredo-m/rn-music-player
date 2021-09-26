@@ -7,5 +7,10 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: Colors.FullShade
+  },
+
+  loading: {
+    position: 'absolute',
+    bottom: 50
   }
 })

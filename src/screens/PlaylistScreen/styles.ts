@@ -6,6 +6,6 @@ export const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: Colors.White
+    backgroundColor: Colors.FullShade
   }
 })
