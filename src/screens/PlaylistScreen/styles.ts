@@ -30,5 +30,9 @@ export const styles = StyleSheet.create({
     flexDirection: 'row',
     borderRadius: 30,
     alignSelf: 'center'
+  },
+
+  scrollContent: {
+    alignItems: 'center'
   }
 })

@@ -15,6 +15,7 @@
     "@apollo/client": "^3.4.13",
     "@react-native-community/audio-toolkit": "^2.0.3",
     "@react-native-community/masked-view": "^0.1.11",
+    "@react-native-community/slider": "^4.1.7",
     "@react-navigation/native": "^6.0.2",
     "@react-navigation/native-stack": "^6.1.0",
     "@react-navigation/stack": "^6.0.7",
