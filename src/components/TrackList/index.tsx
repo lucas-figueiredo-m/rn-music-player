@@ -8,7 +8,7 @@ import { styles } from './styles'
 
 interface Props {
   playlist: PlaylistItem,
-  onTrackPress: (trackItem: TrackItem) => void
+  onTrackPress: (trackItem: TrackItem, trackIndex: number) => void
 }
 
 export const TrackList: React.FC<Props> = ({ playlist, onTrackPress }) => {
@@ -38,8 +38,8 @@ export const TrackList: React.FC<Props> = ({ playlist, onTrackPress }) => {
         ListHeaderComponent={ListHeader}
         data={data?.tracks_aggregate.nodes}
         keyExtractor={(item, index) => index.toString() }
-        renderItem={({ item }) => (
-          <TrackCard track={item} onTrackPress={() => onTrackPress(item)} />
+        renderItem={({ item, index }) => (
+          <TrackCard track={item} onTrackPress={() => onTrackPress(item, index)} />
         )}
       />
     </SafeAreaView>

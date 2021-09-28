@@ -1,5 +1,5 @@
-import { TrackItem } from 'graphql/queries'
-import React, { useCallback, useEffect, useState } from 'react'
+import { GET_TRACKS, Track, TrackItem, TrackVars } from 'graphql/queries'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { View, SafeAreaView, Image } from 'react-native'
 import LinearGradient from 'react-native-linear-gradient'
 import { MiniplayerArtist, MiniplayerTitle, SVG } from 'components'
@@ -14,10 +14,14 @@ import { styles } from './styles'
 import { TouchableOpacity } from 'react-native-gesture-handler'
 import Slider from '@react-native-community/slider'
 import { Player } from '@react-native-community/audio-toolkit'
+import { GraphqlClient } from 'services/GraphqlClient'
 
 interface Props {
   track: TrackItem | null,
-  visible: boolean
+  visible: boolean,
+  playlistId: number,
+  trackIndex: number | null,
+  changeTrackCallback: (track: TrackItem, trackIndex) => void
 }
 
 const hitSlop = {
@@ -29,26 +33,25 @@ const hitSlop = {
 
 let interval: NodeJS.Timer
 
-export const MiniPlayer: React.FC<Props> = ({ track, visible }) => {
+export const MiniPlayer: React.FC<Props> = ({ track, playlistId, trackIndex, changeTrackCallback }) => {
   const [seek, setSeek] = useState<number>(0);
   const [duration, setDuration] = useState<number>(0);
   const [player, setPlayer] = useState<Player | null>(track ? new Player(track?.href) : null)
+  // const PlayerRef = useRef(track ? new Player(track?.href) : null).current
   const [isPlaying, setPlaying] = useState<boolean>(false);
+  const [trackList, setTrackList] = useState<TrackItem[]>( [] );
 
   useEffect( () => {
     player?.prepare()
-    setDuration( player ? Math.round(player.duration) : 0)
-    console.log('duration: ', duration)
+    setDuration( player ? Math.round(player.duration) : 0)  
+
+    player?.on('ended', () => {
+      setSeek(0)
+      setPlaying(false)
+      player.prepare()
+    })
   }, [])
   
-  useEffect( () => {
-    if (player) 
-      player.pause()
-    
-    setPlayer(track ? new Player(track?.href) : null)
-  }, [track])
-
-
   const togglePlayer = useCallback( () => {
     if(player?.isPlaying) {
       player.pause()
@@ -64,13 +67,36 @@ export const MiniPlayer: React.FC<Props> = ({ track, visible }) => {
       player?.destroy()
     }
   }, [])
+  
+  useEffect( () => {
+    player?.stop()
+    
+    console.log('Heppened: ', track?.title)
+    setPlayer(null)
+    setPlayer(track ? new Player(track?.href) : null)
+
+
+    console.log('Player: ', player)
+    const trackList = GraphqlClient.readQuery<Track, TrackVars>({
+      query: GET_TRACKS,
+      variables: { playlistId }
+    })
+
+    player?.prepare()
+
+    togglePlayer();
+    
+    setTrackList(trackList ? trackList.tracks_aggregate.nodes : []);
+
+  }, [track, trackIndex])
+
+
  
   useEffect( () => {
     if (isPlaying) {
       interval = setInterval( () => {
-        setSeek(player ? player.currentTime : 0)
-        console.log('Current: ', player?.currentTime)
-      }, 1000)
+        setSeek((prevState) => prevState + 0.1*1000)
+      }, 100)
 
     } else {
       
@@ -82,15 +108,42 @@ export const MiniPlayer: React.FC<Props> = ({ track, visible }) => {
     }
   }, [isPlaying])
 
-  useEffect( () => {
-    setSeek(player ? player.currentTime : 0)
-    console.log('Current: ', player?.currentTime)
-  }, [duration, player, seek])
-
-  const onSeek = useCallback( (value: number) => {
-    setSeek(value)
-    player?.seek(value)
+  const onFinishSeeking = useCallback( (value: number) => {
+    player?.seek(value, () => {
+      setSeek(value)
+      interval = setInterval( () => {
+        setSeek((prevState) => prevState + 0.1*1000)
+      }, 100)
+    })
   }, [])
+
+  const onStartSeeking = useCallback( () => {
+    clearInterval(interval)
+  }, [])
+
+  const onForwardPress = useCallback( () => {
+    const len = trackList.length
+    if (len > 0 && trackIndex) {
+      if (trackIndex === len - 1)
+        changeTrackCallback(trackList[0], 0)
+      else
+        changeTrackCallback(trackList[trackIndex + 1], trackIndex + 1)
+
+      setSeek(0)
+    }
+  }, [trackList, track, trackIndex])
+
+  const onBackwardPress = useCallback( () => {
+    const len = trackList.length
+    if (len > 0 && trackIndex) {
+      if (trackIndex === 0)
+        changeTrackCallback(trackList[len - 1], len - 1)
+      else
+        changeTrackCallback(trackList[trackIndex - 1], trackIndex - 1)
+
+      setSeek(0)
+    }
+  }, [trackList, track, trackIndex])
 
   return (
     <LinearGradient
@@ -119,20 +172,20 @@ export const MiniPlayer: React.FC<Props> = ({ track, visible }) => {
 
       <View style={styles.player}>
         <Slider
-
           minimumTrackTintColor={Colors.Primary}
           maximumTrackTintColor={Colors.LightShade}
           minimumValue={0}
           maximumValue={duration}
-          step={1}
+          step={0.1}
           style={styles.slider}
           onValueChange={() => null}
-          onSlidingComplete={onSeek}
+          onSlidingComplete={onFinishSeeking}
+          onSlidingStart={onStartSeeking}
           value={seek}
         />
 
         <View style={styles.controllers}>
-          <TouchableOpacity activeOpacity={0.8} style={styles.skipButton} onPress={() => null}>
+          <TouchableOpacity activeOpacity={0.8} style={styles.skipButton} onPress={onBackwardPress}>
             <SVG xml={skipPrevious} color={Colors.Black} fill={Colors.Black} width={30} height={30} />
           </TouchableOpacity>
           
@@ -140,7 +193,7 @@ export const MiniPlayer: React.FC<Props> = ({ track, visible }) => {
             <SVG xml={!isPlaying ? play : pause} color={Colors.White} fill={Colors.White}  width={40} height={40}  />
           </TouchableOpacity>
           
-          <TouchableOpacity activeOpacity={0.8} style={styles.skipButton} onPress={() => null}>
+          <TouchableOpacity activeOpacity={0.8} style={styles.skipButton} onPress={onForwardPress}>
             <SVG xml={skipForward} color={Colors.Black} fill={Colors.Black} width={30} height={30} />
           </TouchableOpacity>
         </View>

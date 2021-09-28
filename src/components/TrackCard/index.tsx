@@ -1,7 +1,7 @@
 import { TrackAuthor, TrackTitle } from 'components'
 import { TrackItem } from 'graphql/queries'
 import React from 'react'
-import { View, Text, Image, Touchable, TouchableOpacity } from 'react-native'
+import { View, Image, TouchableOpacity } from 'react-native'
 import { styles } from './styles'
 
 interface Props {
@@ -11,8 +11,6 @@ interface Props {
 
 export const TrackCard: React.FC<Props> = ({ track, onTrackPress }) => {
 
-  console.log('Track: ', track)
-  
   return (
     <TouchableOpacity
       style={styles.root}
