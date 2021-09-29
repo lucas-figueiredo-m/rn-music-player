@@ -7,6 +7,10 @@ export const styles = StyleSheet.create({
     backgroundColor: Colors.FullShade,
   },
 
+  container: {
+    flex: 1
+  },
+
   header: {
     padding: 20,
     flexDirection: 'row',

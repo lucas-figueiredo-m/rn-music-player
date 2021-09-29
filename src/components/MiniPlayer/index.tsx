@@ -75,45 +75,60 @@ export const MiniPlayer: React.FC<Props> = ({ track, playlistId, trackIndex, cha
   }, [trackList, track, trackIndex])
 
   useEffect( () => {
-    MusicPlayer = new Player(track?.href || '');
-    MusicPlayer.prepare()
-    setDuration( MusicPlayer.duration > 0 ? Math.round(MusicPlayer.duration) : 0)
-    MusicPlayer.play();
-
-    MusicPlayer?.on('ended', () => {
-      setSeek(0)
-      MusicPlayer.pause()
-      playForwardMusic()
-    })
+    if (track) {
+      MusicPlayer = new Player(track?.href || '');
+      MusicPlayer.prepare((err) => {
+        console.warn('Err: ', { err })
+      })
+      setDuration( MusicPlayer.duration > 0 ? Math.round(MusicPlayer.duration) : 0)
+      MusicPlayer.play();
+  
+      MusicPlayer?.on('ended', () => {
+        setSeek(0)
+        MusicPlayer.pause()
+        playForwardMusic()
+      })
+    }
 
     return () => {
-      MusicPlayer.destroy()
+      if (MusicPlayer)
+        MusicPlayer.destroy()
     }
   }, [])
 
   useEffect( () => {
     setSeek(0)
-    MusicPlayer = new Player(track?.href || '')
-    MusicPlayer.prepare((err) => {
-      if (!err) 
-        setDuration( MusicPlayer.duration > 0 ? Math.round(MusicPlayer.duration) : 0)
-        setPlaying(true)
-        MusicPlayer.play()
-    })
+    console.log('Aqui 2: ', track)
+    if (track) {
 
-    MusicPlayer?.on('ended', () => {
-      setSeek(0)
-      playForwardMusic()
-    })
-
+      MusicPlayer = new Player(track?.href || '')
+      MusicPlayer.prepare((err) => {
+        console.log('err: ', { err })
+        if (!err) 
+          setDuration( MusicPlayer.duration > 0 ? Math.round(MusicPlayer.duration) : 0)
+          setPlaying(true)
+          MusicPlayer.play( (error) => {
+            console.log('Error: ', { error })
+          })
+      })
+  
+      MusicPlayer?.on('ended', () => {
+        setSeek(0)
+        playForwardMusic()
+      })
+  
+    }
+    
     const trackList = GraphqlClient.readQuery<Track, TrackVars>({
       query: GET_TRACKS,
       variables: { playlistId }
     })
     setTrackList(trackList ? trackList.tracks_aggregate.nodes : []);
-
+    
     return () => {
-      MusicPlayer.destroy()
+
+      if (MusicPlayer)
+        MusicPlayer.destroy()
     }
 
   }, [track, trackIndex])
@@ -128,7 +143,8 @@ export const MiniPlayer: React.FC<Props> = ({ track, playlistId, trackIndex, cha
     }
 
     return () => {
-      MusicPlayer.destroy()
+      if (MusicPlayer)
+        MusicPlayer.destroy()
     }
   }, [])
  

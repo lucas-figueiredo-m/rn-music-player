@@ -9,7 +9,7 @@ const App: React.FC = () => {
   
   return (
     <ApolloProvider client={GraphqlClient}>
-      <StatusBar translucent backgroundColor={Colors.TRANSPARENT} barStyle='light-content' />
+      <StatusBar backgroundColor={Colors.TRANSPARENT} barStyle='light-content' />
       <Router />
     </ApolloProvider>
   )

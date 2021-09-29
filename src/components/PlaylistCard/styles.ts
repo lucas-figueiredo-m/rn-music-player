@@ -5,9 +5,8 @@ const { width } = Dimensions.get('screen')
 
 export const styles = StyleSheet.create({
   root: {
-    flex: 1,
     width: width * 0.9,
-    height: 50,
+    height: 120,
     backgroundColor: Colors.MediumShade,
     borderRadius: 10,
     alignSelf: 'center',
