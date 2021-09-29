@@ -6,12 +6,17 @@ const { width, height } = Dimensions.get('screen');
 
 export const styles = StyleSheet.create({
   root: {
-    width,
-    height,
     position: 'absolute',
+    alignSelf: 'center',
     backgroundColor: Colors.FullShade,
     zIndex: 10
   },
+
+  gradientView: {
+    flex: 1
+  },
+
+
 
   dropDown: {
     margin: 20
@@ -63,5 +68,46 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: Colors.Primary
+  },
+
+  duration: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    width: width * 0.9
+  },
+
+  miniView: {
+    flex: 1,
+    borderRadius: 10,
+    backgroundColor: Colors.Black,
+  },
+
+  miniPlayer: {
+    flexDirection: 'row',
+    paddingHorizontal: '3%',
+    alignItems: 'center',
+    flex: 1,
+  },
+
+  barContainer: {
+    alignItems: 'center',
+    height: 5
+  },
+
+  miniTrackImage: {
+    width: height * 0.08,
+    height: height * 0.08,
+    resizeMode: 'contain'
+  },
+
+  miniContainer: {
+    flex: 1,
+    marginLeft: '3%',
+  },
+
+  miniPlayContainer: {
+    alignItems: 'flex-end',
+    marginRight: '3%'
   }
 })

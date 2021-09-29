@@ -14,6 +14,12 @@ export const TrackAuthor: React.FC<Props> = ({ children, textStyle }) => <Text s
 
 export const PlaylistTitle: React.FC<Props> = ({ children, textStyle }) => <Text style={[styles.playlistTitle, textStyle]}>{children}</Text>
 
+export const PlayerTitle: React.FC<Props> = ({ children, textStyle }) => <Text style={[styles.playerTitle, textStyle]}>{children}</Text>
+
+export const PlayerArtist: React.FC<Props> = ({ children, textStyle }) => <Text style={[styles.playerArtist, textStyle]}>{children}</Text>
+
+export const DurationTime: React.FC<Props> = ({ children, textStyle }) => <Text style={[styles.durationTime, textStyle]}>{children}</Text>
+
 export const MiniplayerTitle: React.FC<Props> = ({ children, textStyle }) => <Text style={[styles.miniplayerTitle, textStyle]}>{children}</Text>
 
 export const MiniplayerArtist: React.FC<Props> = ({ children, textStyle }) => <Text style={[styles.miniplayerArtist, textStyle]}>{children}</Text>

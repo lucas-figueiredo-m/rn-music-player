@@ -27,18 +27,38 @@ export const styles = StyleSheet.create({
     fontSize: 24
   },
 
-  miniplayerTitle: {
+  playerTitle: {
     color: Colors.LightestShade,
     fontFamily: FontFamilies.SemiBold,
     fontSize: 24,
     marginBottom: 10
   },
 
-  miniplayerArtist: {
+  playerArtist: {
     color: Colors.LightShade,
     fontFamily: FontFamilies.SemiBold,
     fontSize: 18,
     marginBottom: 10
   },
+
+  miniplayerTitle: {
+    color: Colors.LightestShade,
+    fontFamily: FontFamilies.SemiBold,
+    fontSize: 18,
+    marginBottom: 10
+  },
+
+  miniplayerArtist: {
+    color: Colors.LightShade,
+    fontFamily: FontFamilies.SemiBold,
+    fontSize: 14,
+    marginBottom: 10
+  },
+
+  durationTime: {
+    color: Colors.LightestShade,
+    fontFamily: FontFamilies.SemiBold,
+    fontSize: 20
+  }
 
 })

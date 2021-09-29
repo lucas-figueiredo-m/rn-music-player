@@ -13,6 +13,7 @@ const TracksScreen: React.FC = () => {
   const { params } = useRoute<TrackScreenRouteProps>();
   const [track, setTrack] = useState<TrackItem | null>(null);
   const [trackIndex, setTrackIndex] = useState<number | null>(null)
+  const [expanded, setExpanded] = useState<boolean>(false);
   
 
   useEffect( () => {
@@ -44,13 +45,15 @@ const TracksScreen: React.FC = () => {
         onTrackPress={(trackItem: TrackItem, trackI: number) => {
           setTrackIndex(trackI)
           setTrack(trackItem)
+          setExpanded(true)
         }}
       />
 
       <MiniPlayer
         track={track}
         trackIndex={trackIndex}
-        visible={true}
+        expanded={expanded}
+        setExpanded={setExpanded}
         playlistId={params.playlist.id}
         changeTrackCallback={(trackItem: TrackItem, trackI: number) => {
           setTrackIndex(trackI)
