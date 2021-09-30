@@ -14,5 +14,9 @@ export const styles = StyleSheet.create({
     marginTop: '30%',
     marginBottom: '30%',
     marginLeft: '3%'
+  },
+
+  flatlistContent: {
+    paddingBottom: '35%'
   }
 })

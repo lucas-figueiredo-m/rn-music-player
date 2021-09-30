@@ -1,5 +1,5 @@
-import { GET_TRACKS, Track, TrackItem, TrackVars } from 'graphql/queries'
-import React, { Dispatch, SetStateAction, useCallback, useEffect, useRef, useState } from 'react'
+import { TrackPlayer } from 'graphql/queries'
+import React, { Dispatch, SetStateAction, useEffect, useRef, useState } from 'react'
 import { View, SafeAreaView, Image, Animated, TouchableOpacity, Dimensions } from 'react-native'
 import LinearGradient from 'react-native-linear-gradient'
 import { DurationTime, MiniplayerArtist, MiniplayerTitle, PlayerArtist, PlayerTitle, SVG } from 'components'
@@ -13,18 +13,15 @@ import skipPrevious from 'assets/icons/skip-back.svg';
 import skipForward from 'assets/icons/skip-forward.svg';
 import { styles } from './styles'
 import Slider from '@react-native-community/slider'
-import { Player } from '@react-native-community/audio-toolkit'
-import { GraphqlClient } from 'services/GraphqlClient'
 import { millis2clock } from 'helpers/timeHelpers'
 
 const { width } = Dimensions.get('screen');
 
 interface Props {
-  track: TrackItem | null,
+  trackList: TrackPlayer[],
   expanded: boolean,
-  playlistId: number,
   trackIndex: number | null,
-  changeTrackCallback: (track: TrackItem, trackIndex) => void
+  changeTrackCallback: (trackIndex) => void
   setExpanded: Dispatch<SetStateAction<boolean>>
 }
 
@@ -37,13 +34,13 @@ const hitSlop = {
 
 
 let interval: NodeJS.Timer
-let MusicPlayer: Player
+// let track.player: Player
 
-export const MiniPlayer: React.FC<Props> = ({ track, playlistId, trackIndex, changeTrackCallback, expanded, setExpanded }) => {
+export const MiniPlayer: React.FC<Props> = ({ trackIndex, trackList, changeTrackCallback, expanded, setExpanded }) => {
   const [seek, setSeek] = useState<number>(0);
   const [duration, setDuration] = useState<number>(0);
   const [isPlaying, setPlaying] = useState<boolean>(false);
-  const [trackList, setTrackList] = useState<TrackItem[]>( [] );
+  const [track, setTrack] = useState<TrackPlayer | null>(null);
   const AnimSize = useRef( new Animated.Value(0) ).current
 
   useEffect( () => {
@@ -54,104 +51,100 @@ export const MiniPlayer: React.FC<Props> = ({ track, playlistId, trackIndex, cha
     }).start()
   }, [expanded])
 
-  const playForwardMusic = useCallback( () => {
+  const playForwardMusic = () => {
     const len = trackList.length;
-    if (len > 0 && (trackIndex || trackIndex === 0)) {
-      if (trackIndex < len - 1)
-        changeTrackCallback(trackList[trackIndex + 1], trackIndex + 1)
-      else
-        changeTrackCallback(trackList[0], 0)
-    }
-  }, [trackList, track, trackIndex])
+    let index: number
 
-  const playBackwardMusic = useCallback( () => {
+    if (trackIndex !== null && track) {
+      if (len > 0 && (trackIndex || trackIndex === 0)) {
+        if (trackIndex < len - 1) 
+          index = trackIndex + 1
+        else 
+          index = 0
+    
+        changeTrackCallback(index)
+      }
+    }
+  }
+
+  const playBackwardMusic = () => {
     const len = trackList.length
-    if (len > 0 && (trackIndex || trackIndex === 0)) {
-      if (trackIndex === 0)
-        changeTrackCallback(trackList[len - 1], len - 1)
-      else
-        changeTrackCallback(trackList[trackIndex - 1], trackIndex - 1)
-    }
-  }, [trackList, track, trackIndex])
+    let index: number
 
-  useEffect( () => {
-    if (track) {
-      MusicPlayer = new Player(track?.href || '');
-      MusicPlayer.prepare((err) => {
-        console.warn('Err: ', { err })
-      })
-      setDuration( MusicPlayer.duration > 0 ? Math.round(MusicPlayer.duration) : 0)
-      MusicPlayer.play();
+    if (trackIndex !== null && track) {
+      if (len > 0 && (trackIndex || trackIndex === 0)) {
+        if (trackIndex === 0)
+          index = len - 1
+        else
+          index = trackIndex - 1
   
-      MusicPlayer?.on('ended', () => {
-        setSeek(0)
-        MusicPlayer.pause()
-        playForwardMusic()
-      })
+        changeTrackCallback(index)
+      }
     }
 
-    return () => {
-      if (MusicPlayer)
-        MusicPlayer.destroy()
-    }
-  }, [])
+  }
+
 
   useEffect( () => {
+    console.log('TrackIndex: ', trackIndex)
     setSeek(0)
-    console.log('Aqui 2: ', track)
-    if (track) {
+    if (track)
+      track.player.pause()
+    if (trackIndex !== null) {
+      setTrack(() => {
 
-      MusicPlayer = new Player(track?.href || '')
-      MusicPlayer.prepare((err) => {
-        console.log('err: ', { err })
-        if (!err) 
-          setDuration( MusicPlayer.duration > 0 ? Math.round(MusicPlayer.duration) : 0)
-          setPlaying(true)
-          MusicPlayer.play( (error) => {
-            console.log('Error: ', { error })
-          })
+        const newTrack = trackList[trackIndex]
+
+        newTrack?.player.prepare((err) => {
+          console.log('err: ', { err })
+          if (!err) 
+            setDuration( newTrack.player.duration > 0 ? Math.round(newTrack.player.duration) : 0)
+            setPlaying(true)
+            newTrack.player.play( (error) => {
+              setDuration( newTrack.player.duration > 0 ? Math.round(newTrack.player.duration) : 0)
+              console.log('Error: ', { error })
+            })
+        })
+
+        newTrack?.player.on('ended', () => {
+          setSeek(0)
+          playForwardMusic()
+        })
+
+        return newTrack
       })
   
-      MusicPlayer?.on('ended', () => {
-        setSeek(0)
-        playForwardMusic()
-      })
+      
   
     }
-    
-    const trackList = GraphqlClient.readQuery<Track, TrackVars>({
-      query: GET_TRACKS,
-      variables: { playlistId }
-    })
-    setTrackList(trackList ? trackList.tracks_aggregate.nodes : []);
     
     return () => {
 
-      if (MusicPlayer)
-        MusicPlayer.destroy()
+      if (track)
+        track.player.pause()
     }
 
-  }, [track, trackIndex])
+  }, [trackIndex])
   
-  const togglePlayer = useCallback( () => {
-    if(MusicPlayer.isPlaying) {
-      MusicPlayer.pause()
+  const togglePlayer =  () => {
+    if(track?.player.isPlaying) {
+      track.player.pause()
       setPlaying(false)
     } else {  
-      MusicPlayer.play()
+      track?.player.play()
       setPlaying(true)
     }
 
     return () => {
-      if (MusicPlayer)
-        MusicPlayer.destroy()
+      if (track)
+        track.player.pause()
     }
-  }, [])
+  }
  
   useEffect( () => {
     if (isPlaying) {
       interval = setInterval( () => {
-        setSeek(MusicPlayer.currentTime)
+        setSeek(track?.player.currentTime || 0)
       }, 100)
 
     } else {
@@ -164,18 +157,18 @@ export const MiniPlayer: React.FC<Props> = ({ track, playlistId, trackIndex, cha
     }
   }, [isPlaying, track])
 
-  const onFinishSeeking = useCallback( (value: number) => {
-    MusicPlayer.seek(value, () => {
+  const onFinishSeeking = (value: number) => {
+    track?.player.seek(value, () => {
       setSeek(value)
       interval = setInterval( () => {
         setSeek((prevState) => prevState + 0.1*1000)
       }, 100)
     })
-  }, [])
+  }
 
-  const onStartSeeking = useCallback( () => {
+  const onStartSeeking =  () => {
     clearInterval(interval)
-  }, [])
+  }
 
   const BottomInterp = AnimSize.interpolate({
     inputRange: [0, 1],

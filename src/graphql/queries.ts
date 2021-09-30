@@ -1,4 +1,5 @@
 import { gql } from '@apollo/client';
+import { Player } from '@react-native-community/audio-toolkit';
 
 export interface PlaylistItem {
   id: number,
@@ -16,6 +17,10 @@ export interface TrackItem {
   artist: string,
   href: string,
   title: string
+}
+
+export interface TrackPlayer extends TrackItem {
+  player: Player
 }
 
 export interface Track {
