@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react'
-import { View } from 'react-native'
+import { Text, View } from 'react-native'
 import { SVG } from 'components';
 import logo from 'assets/img/logo.svg'
 import { styles } from './styles'
@@ -25,6 +25,7 @@ const SplashScreen: React.FC = () => {
   return (
     <View style={styles.root}>
       <SVG xml={logo} width={100} height={100} />
+      <Text>Hello</Text>
     </View>
   )
 }

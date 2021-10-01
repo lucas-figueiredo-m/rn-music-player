@@ -1,5 +1,5 @@
 import { TrackPlayer } from 'graphql/queries'
-import React, { Dispatch, SetStateAction, useEffect, useRef, useState } from 'react'
+import React, { Dispatch, SetStateAction, useEffect, useRef, useState, useCallback } from 'react'
 import { View, SafeAreaView, Image, Animated, TouchableOpacity, Dimensions } from 'react-native'
 import LinearGradient from 'react-native-linear-gradient'
 import { DurationTime, MiniplayerArtist, MiniplayerTitle, PlayerArtist, PlayerTitle, SVG } from 'components'
@@ -157,18 +157,18 @@ export const MiniPlayer: React.FC<Props> = ({ trackIndex, trackList, changeTrack
     }
   }, [isPlaying, track])
 
-  const onFinishSeeking = (value: number) => {
+  const onFinishSeeking = useCallback( (value: number) => {
     track?.player.seek(value, () => {
       setSeek(value)
       interval = setInterval( () => {
         setSeek((prevState) => prevState + 0.1*1000)
       }, 100)
     })
-  }
+  }, [track, trackIndex])
 
-  const onStartSeeking =  () => {
+  const onStartSeeking = useCallback( () => {
     clearInterval(interval)
-  }
+  }, [track, trackIndex])
 
   const BottomInterp = AnimSize.interpolate({
     inputRange: [0, 1],

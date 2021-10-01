@@ -23,7 +23,7 @@ const PlaylistScreen: React.FC = () => {
       {
         loading
         ?
-        <ActivityIndicator size='large' color={Colors.Primary} />
+        <ActivityIndicator testID='loader' size='large' color={Colors.Primary} />
         :
         error
         ?

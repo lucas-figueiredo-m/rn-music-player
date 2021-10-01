@@ -8,6 +8,10 @@
 .env.staging
 .env.production
 
+# Tests
+coverage/
+artifacts/
+
 # Xcode
 #
 build/
