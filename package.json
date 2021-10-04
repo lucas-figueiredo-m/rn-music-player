@@ -10,7 +10,8 @@
     "staging": "cd android && ./gradlew assembleStaging && open app/build/outputs/apk/staging && cd ..",
     "release": "cd android && ./gradlew assembleRelease && open app/build/outputs/apk/release && cd ..",
     "test": "jest",
-    "lint": "eslint . --ext .js,.jsx,.ts,.tsx"
+    "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
+    "detox:ios": "yarn detox test --configuration ios"
   },
   "dependencies": {
     "@apollo/client": "^3.4.13",

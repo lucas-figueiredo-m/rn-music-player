@@ -14,7 +14,7 @@ interface Props {
 export const PlaylistCard: React.FC<Props> = ({ playlist }) => {
  const { navigate } = useNavigation<PlaylistScreenProps>();
   return (
-    <TouchableOpacity onPress={() => navigate(MainRoutes.TRACKS_SCREEN, { playlist })} style={styles.root}>
+    <TouchableOpacity testID={`playlist-${playlist.id}`} onPress={() => navigate(MainRoutes.TRACKS_SCREEN, { playlist })} style={styles.root}>
       <Image source={{ uri: playlist.picture }} style={styles.image} />
       <View style={styles.container}>
         <PlaylistTitle>{playlist.name}</PlaylistTitle>

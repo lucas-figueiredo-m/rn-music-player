@@ -36,7 +36,7 @@ const TracksScreen: React.FC = () => {
   }, [])
 
   return (
-    <View style={styles.root}>
+    <View testID='track-screen' style={styles.root}>
 
       <View style={styles.container}>
         <Image source={{ uri: params.playlist.picture }} style={styles.playlistImage} />

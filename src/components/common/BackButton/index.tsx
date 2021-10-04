@@ -20,6 +20,7 @@ export const BackButton: React.FC = () => {
       onPress={() => goBack()}
       style={styles.root}
       hitSlop={hitSlop}
+      testID='back-button'
     >
       <SVG xml={chevronLeft} color={Colors.White} width={30} height={30} />
     </TouchableOpacity>

@@ -10,11 +10,12 @@ interface Props {
 }
 
 export const TrackCard: React.FC<Props> = ({ track, onTrackPress }) => {
-
+  console.log('TrackId: ', track.id)
   return (
     <TouchableOpacity
       style={styles.root}
       onPress={onTrackPress}
+      testID={`track-${track.id}`}
     >
       <Image source={{ uri: track.picture }} style={styles.image} />
       <View style={styles.container}>

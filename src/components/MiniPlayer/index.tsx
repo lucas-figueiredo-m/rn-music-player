@@ -1,6 +1,6 @@
-import { TrackPlayer } from 'graphql/queries'
 import React, { Dispatch, SetStateAction, useEffect, useRef, useState, useCallback } from 'react'
 import { View, SafeAreaView, Image, Animated, TouchableOpacity, Dimensions } from 'react-native'
+import { TrackPlayer } from 'graphql/queries'
 import LinearGradient from 'react-native-linear-gradient'
 import { DurationTime, MiniplayerArtist, MiniplayerTitle, PlayerArtist, PlayerTitle, SVG } from 'components'
 import { Colors, Metrics } from 'styles'
@@ -200,6 +200,7 @@ export const MiniPlayer: React.FC<Props> = ({ trackIndex, trackList, changeTrack
           > 
             <SafeAreaView>
               <TouchableOpacity
+                testID='miniplayer-minimize'
                 onPress={() => setExpanded(false)}
                 hitSlop={hitSlop}
                 style={styles.dropDown}
@@ -237,15 +238,15 @@ export const MiniPlayer: React.FC<Props> = ({ trackIndex, trackList, changeTrack
               </View>
 
               <View style={styles.controllers}>
-                <TouchableOpacity activeOpacity={0.8} style={styles.skipButton} onPress={playBackwardMusic}>
+                <TouchableOpacity testID='skip-back' activeOpacity={0.8} style={styles.skipButton} onPress={playBackwardMusic}>
                   <SVG xml={skipPrevious} color={Colors.Black} fill={Colors.Black} width={30} height={30} />
                 </TouchableOpacity>
                 
-                <TouchableOpacity activeOpacity={0.8} style={styles.playButton} onPress={togglePlayer}>
+                <TouchableOpacity testID='play-button' activeOpacity={0.8} style={styles.playButton} onPress={togglePlayer}>
                   <SVG xml={!isPlaying ? play : pause} color={Colors.White} fill={Colors.White}  width={40} height={40} />
                 </TouchableOpacity>
                 
-                <TouchableOpacity activeOpacity={0.8} style={styles.skipButton} onPress={playForwardMusic}>
+                <TouchableOpacity testID='skip-next' activeOpacity={0.8} style={styles.skipButton} onPress={playForwardMusic}>
                   <SVG xml={skipForward} color={Colors.Black} fill={Colors.Black} width={30} height={30} />
                 </TouchableOpacity>
               </View>
@@ -254,6 +255,7 @@ export const MiniPlayer: React.FC<Props> = ({ trackIndex, trackList, changeTrack
           </LinearGradient>
         ) : (
           <TouchableOpacity
+            testID='miniplayer-maximize'
             style={styles.miniView}
             activeOpacity={0.8}
             onPress={() => setExpanded(true)}
@@ -270,6 +272,7 @@ export const MiniPlayer: React.FC<Props> = ({ trackIndex, trackList, changeTrack
               </View>
 
               <TouchableOpacity
+                testID='miniplayer-play'
                 hitSlop={hitSlop}
                 activeOpacity={0.8}
                 onPress={togglePlayer}

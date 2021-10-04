@@ -15,7 +15,7 @@ const PlaylistScreen: React.FC = () => {
   const { loading, error, data } = useQuery<Playlist>(GET_PLAYLISTS);
 
   return (
-    <SafeAreaView style={styles.root}>
+    <SafeAreaView testID='playlist-screen' style={styles.root}>
       <View style={styles.header}>
         <Title>Playlists</Title>
         <SVG xml={logo} />
@@ -32,6 +32,7 @@ const PlaylistScreen: React.FC = () => {
         <View style={styles.container}>
           <FlatList
             data={data?.playlists}
+            testID='playlist-list'
             keyExtractor={(item) => item.id.toString()}
             indicatorStyle='white'
             contentContainerStyle={styles.scrollContent}
