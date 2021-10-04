@@ -8,6 +8,9 @@
 .env.staging
 .env.production
 
+#
+file.md
+
 # Tests
 coverage/
 artifacts/
